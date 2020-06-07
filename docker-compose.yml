@@ -1,0 +1,18 @@
+version: "3.8"
+services:
+  websocket:
+    image: golang:1.14.4-buster
+    volumes:
+    - ./go-websocket-echo:/src/github.com/leki75/go-websocket-echo
+    working_dir: /src/github.com/leki75/go-websocket-echo
+    command: go run main.go
+
+  openresty:
+    image: openresty/openresty:latest
+    volumes:
+    - ./openresty/nginx.conf:/usr/local/openresty/nginx/conf/nginx.conf
+    - ./openresty/conf.d:/etc/nginx/conf.d/
+    ports:
+    - "8080:8080"
+    depends_on:
+    - websocket
