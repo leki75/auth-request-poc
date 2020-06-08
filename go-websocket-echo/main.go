@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"net/http"
-	"os"
 
 	"github.com/gorilla/websocket"
 	"golang.org/x/net/http2"
@@ -41,11 +40,11 @@ func handler(wr http.ResponseWriter, req *http.Request) {
 
 	var message []byte
 
-	host, err := os.Hostname()
-	if err == nil {
-		message = []byte(fmt.Sprintf("Request served by %s", host))
+	token, ok := req.Header["Authorization"]
+	if ok {
+		message = []byte(fmt.Sprintf("Authorization: %s", token[0]))
 	} else {
-		message = []byte(fmt.Sprintf("Server hostname unknown: %s", err.Error()))
+		message = []byte("No Authorization header")
 	}
 
 	err = connection.WriteMessage(websocket.TextMessage, message)
